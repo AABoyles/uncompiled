@@ -46,7 +46,7 @@ $$\Pr(A|B)=\frac{\Pr(B|A)\Pr(A)}{\Pr(B|A)\Pr(A)+\Pr(B|\neg A)\Pr(\neg A)}$$
 
 ### Write a post
 
-Make a regular Markdown document. I like to put them in [the `posts/` directory](), but you can put them wherever. Just put the relative path in the address when linking to it.
+Make a regular Markdown document. I like to put them in [the `posts/` directory](https://github.com/AABoyles/uncompiled/tree/main/posts), but you can put them wherever. Just put the relative path in the address when linking to it.
 
 ### Addressess
 
@@ -57,4 +57,4 @@ Addressing is managed through the `post` GET parameter. If you don't provide one
 
 ### Styling
 
-Just edit the [style.css]() file to suit your preferences.
+Just edit the [style.css](https://github.com/AABoyles/uncompiled/blob/main/style.css) file to suit your preferences. It uses [Bootstrap's Reboot](https://getbootstrap.com/docs/5.0/content/reboot/) to enforce a modicum of cross-browser consistency.
