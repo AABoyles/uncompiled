@@ -1,24 +1,26 @@
-body {
-  padding: 2rem 10rem;
-  background: darkgray;
+header {
+  position: fixed;
+  top: 0px;
+  padding: 8px;
+  width: 100%;
+  background-color:inherit;
 }
-main {
-  margin: 0 auto;
-  max-width: 960px;
-  background: white;
-  padding: 1rem;
-  border-radius: 1rem;
+header > span {
+  margin-right: 1rem;
 }
-h2, h3, h4, h5 {
-  margin-top: 1.5rem;
+header a:link {
+  text-decoration: none;
+}
+header a:visited {
+  text-decoration: none;
+}
+table {
+  border: 1px solid lightgray;
+  border-collapse: collapse;
+  text-align: left;
 }
 th, td {
-  border: 1px solid white;
   padding: 4px;
   margin: 4px;
 }
-table {
-  border-collapse: collapse;
-  color: #444;
-  background: #f0f0f0;
-}
+.katex { font-size: 1em; }
