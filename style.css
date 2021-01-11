@@ -23,4 +23,13 @@ th, td {
   padding: 4px;
   margin: 4px;
 }
-.katex { font-size: 1em; }
+section > iframe {
+  width: 55%;
+  min-height: 400px;
+}
+pre > code {
+  margin-left: 0;
+}
+.katex {
+  font-size: 1em;
+}
