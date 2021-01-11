@@ -1,12 +1,16 @@
-# uncompiled
+# `uncompiled`
 
 <p class="subtitle">A Markdown Non-Compiled Non-Blog</p>
+
+## What's this?
+
+A platform for writing static content in markdown, reading it in [Tufte-approved HTML](https://edwardtufte.github.io/tufte-css/), and publishing without ever needing to open a terminal (or leave github, for that matter).
 
 ## Quick Start
 
 1. [Use the uncompiled repo as a template for your new repo.](https://github.com/AABoyles/uncompiled/generate)
-2. Write your content in [`README.md`](https://github.com/AABoyles/uncompiled/blob/main/README.md) (or any subdirectory you prefer).
-3. Customize the [menu.json](https://github.com/AABoyles/uncompiled/blob/main/menu.json) file.
+2. Write your content in [`README.md`](https://github.com/AABoyles/uncompiled/blob/main/README.md) (or any markdown file in any subdirectory you prefer).
+3. Configure your site using [config.json](https://github.com/AABoyles/uncompiled/blob/main/config.json) file.
 4. [Publish using Github Pages](https://pages.github.com/).
 
 ## Features
@@ -57,7 +61,7 @@ And the markdown to represent it:
 $$\Pr(A|B)=\frac{\Pr(B|A)\Pr(A)}{\Pr(B|A)\Pr(A)+\Pr(B|\neg A)\Pr(\neg A)}$$
 ```
 
-Note the double dollar-signs. This denotes that the expression should be displayed on its own line. If you want to use inline $\LaTeX$, use single dollar signs instead.
+Note the double dollar-signs. This denotes that the expression should be displayed on its own line. If you want to produce inline $\LaTeX$, use single dollar signs instead.
 
 ### Side- and Margin notes
 
@@ -84,20 +88,24 @@ Note: if you intend to place links in your side- and margin- notes,
 
 ### Write a post
 
-Make a regular Markdown document. I like to put them in [the `posts/` directory](https://github.com/AABoyles/uncompiled/tree/main/posts), but you can put them wherever. Just put the relative path in the address when linking to it.
+Make a regular Markdown document. I like to put them in [the `pages/` directory](https://github.com/AABoyles/uncompiled/tree/main/pages), but you can put them wherever. Just put the relative path in the address when linking to it.
 
-### Addressess
+### Configurations
 
-Addressing is managed through the `post` GET parameter. If you don't provide one, it attempts to load `README.md` (i.e. the document you're presently reading.) Here's the explicit link to this document looks like this:
+All the global configurations are stroed in [`config.json`](https://github.com/AABoyles/uncompiled/blob/main/config.json)
 
-```
-https://aaboyles.github.io/uncompiled?q=README.md
-```
+### Addresses
 
-`q` is a relative path, so you can put content in subdirectories and then reference it:
+Addressing is managed through the `q` (for "query", but [shorter](https://qntm.org/urls)) HTTP GET parameter. If you don't provide one, it attempts to load `README.md` (i.e. the document you're presently reading.) An explicit link to this document looks like this:
 
 ```
-https://aaboyles.github.io/uncompiled?q=pages/AnotherPage.md
+https://anthony.boyles.cc/uncompiled?q=README.md
+```
+
+`q` is a relative path, so you can put content in [another page](https://anthony.boyles.cc/uncompiled?q=pages/AnotherPage.md) and then reference it:
+
+```
+https://anthony.boyles.cc/uncompiled?q=pages/AnotherPage.md
 ```
 
 ### Styling
@@ -124,4 +132,4 @@ The bottom line is, there's no automated way to create the kinds of features we 
 
 ### So what's the catch?
 
-It doesn't work especially well with search indexing, so don't count on Google to drive a bunch of traffic to your site. The reason is that the resource that the user sees (crisply-formatted and styled HTML) doesn't exist for the web crawler--all that HTML is generated on-the-fly by the reader's browser. So
+It doesn't work especially well with search indexing, so don't count on Google to drive a bunch of traffic to your site. The reason is that the resource that the user sees (crisply-formatted and styled HTML) doesn't exist for the web crawler--all that HTML is generated on-the-fly by the reader's browser. So this is not recommended if you want people to be able to find your content via searching. Works fine for link-sharing (e.g. email, social media) though.

@@ -1,10 +1,7 @@
 (function(){
-  let header = document.querySelector('header');
 
-  fetch('menu.json')
-    .then(res => res.json())
-    .then(menu => {
-      menu.forEach(item => {
+  let header = document.querySelector('header');
+  let addMenuItem = item => {
         let node = document.createElement('span');
         if(typeof item == "string"){
           node.innerText = item;
@@ -12,8 +9,13 @@
           node.innerHTML = `<a href="${item.url}">${item.text}</a>`;
         }
         header.append(node);
+  };
+
+  fetch('config.json')
+    .then(res => res.json())
+    .then(config => {
+      config.menu.forEach(addMenuItem);
       });
-    })
 
   let params = new URLSearchParams(document.location.search.substring(1));
   let post = params.get('q') || 'README.md';
