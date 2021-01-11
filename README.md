@@ -84,6 +84,10 @@ Note: if you intend to place links in your side- and margin- notes,
 1. You'll need to write the links in HTML (because nested markdown links are a mess to parse).
 2. The link will need to extend from wherever it begins in the note to the end of the note (because nested markdown links are a mess to parse).
 
+### Embedded Graphs
+
+[Uh, there are some options.](?q=pages/EmbeddingGraphs.md)
+
 ## OK, I'm sold. How do I use it?
 
 ### Write a post
