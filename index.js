@@ -6,7 +6,8 @@
     if(typeof item == "string"){
       node.innerText = item;
     } else {
-      node.innerHTML = `<a href="${item.url}">${item.text}</a>`;
+      node.innerHTML = `<a href="${item.url || config.baseURL || '#'}">${item.text}</a>`;
+      if(item.style) node.style = item.style;
     }
     header.append(node);
   };

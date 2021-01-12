@@ -1,9 +1,11 @@
 {
-  "title": "Uncompiled",
+  "title": "uncompiled",
+  "baseURL": "https://aaboyles.github.io/uncompiled/",
   "menu": [
     {
-      "text": "Uncompiled",
-      "url": "https://aaboyles.github.io/uncompiled"
+      "text": "uncompiled",
+      "url": "https://aaboyles.github.io/uncompiled",
+      "style": "font-family: monospace"
     },
     {
       "text": "Github",
