@@ -4,7 +4,7 @@
 
 ## What's this?
 
-A platform for writing static content in markdown, reading it in [Tufte-approved HTML](https://edwardtufte.github.io/tufte-css/), and publishing without ever needing to open a terminal (or leave github, for that matter).
+A platform for writing static content in markdown, reading it in [Tufte-approved HTML](https://edwardtufte.github.io/tufte-css/), and publishing without ever needing to open a terminal ([or even leave github](https://aaboyles.github.io/uncompiled?q=pages/github.md), for that matter).
 
 ## Quick Start
 
