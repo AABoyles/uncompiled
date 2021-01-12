@@ -15,6 +15,8 @@
   fetch('config.json')
     .then(res => res.json())
     .then(config => {
+      self.config = config;
+      document.querySelector('title').innerText = config.title;
       config.menu.forEach(addMenuItem);
     });
 
