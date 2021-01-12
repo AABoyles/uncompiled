@@ -96,20 +96,20 @@ Make a regular Markdown document. I like to put them in [the `pages/` directory]
 
 ### Configurations
 
-All the global configurations are stroed in [`config.json`](https://github.com/AABoyles/uncompiled/blob/main/config.json)
+All the global configurations are stored in [`config.json`](https://github.com/AABoyles/uncompiled/blob/main/config.json). We also have [a bit more documentation](https://aaboyles.github.io/uncompiled?q=pages/config.md).
 
 ### Addresses
 
 Addressing is managed through the `q` (for "query", but [shorter](https://qntm.org/urls)) HTTP GET parameter. If you don't provide one, it attempts to load `README.md` (i.e. the document you're presently reading.) An explicit link to this document looks like this:
 
 ```
-https://anthony.boyles.cc/uncompiled?q=README.md
+https://aaboyles.github.io/uncompiled?q=README.md
 ```
 
-`q` is a relative path, so you can put content in [another page](https://anthony.boyles.cc/uncompiled?q=pages/AnotherPage.md) and then reference it:
+`q` is a relative path, so you can put content in [another page](https://aaboyles.github.io/uncompiled?q=pages/AnotherPage.md) and then reference it:
 
 ```
-https://anthony.boyles.cc/uncompiled?q=pages/AnotherPage.md
+https://aaboyles.github.io/uncompiled?q=pages/AnotherPage.md
 ```
 
 ### Styling
