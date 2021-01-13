@@ -57,10 +57,10 @@ Apologies if this shocks you! Yes, `uncompiled` is designed to be used without e
 
 If you attempt to knit the rmarkdown document using the handy knitr button in Rstudio, it's going to go through the whole pipeline shown above. Normally this is awesome and we get a nifty HTML document at the end. However, this time we only want the markdown which is an intermediate step of the regular workflow. We can fiddle with the settings to prevent R from deleting the markdown file when it's done creating it, but that still ends up creating the HTML document *which is absolutely useless to us*.
 
-Fortunately, the process, as far as we need it, happens all in R, which means we can just use plain R code to make it happen. All we need to do is pass the relevant command to knitr::knit, which is...
+Fortunately, the process, as far as we need it, happens all in R, which means we can just use plain R code to make it happen. All we need to do is pass the path to the Rmarkdown file to `knitr::knit`, like...
 
 ```r
 knitr::knit('path/to/my.Rmd')
 ```
 
-Assuming you've followed this guide, Knitr will do the magic with the images and spit out a plain 'ol valid markdown file that you can commit to your `uncompiled` repo. Again, for a live example of this, see [Forecast Degradation Functions](http://aaboyles.github.io/q=pages/forecast-degradation.md) and its [source Rmarkdown file](https://github.com/AABoyles/aaboyles.github.io/blob/main/pages/forecast-degradation.Rmd).
+Assuming you've followed this guide, Knitr will do the magic with the images and spit out a plain 'ol valid markdown file that you can commit to your `uncompiled` repo. For a live example of this whole thing, see [Forecast Degradation Functions](http://aaboyles.github.io/q=pages/forecast-degradation.md) and its [source Rmarkdown file](https://github.com/AABoyles/aaboyles.github.io/blob/main/pages/forecast-degradation.Rmd).
