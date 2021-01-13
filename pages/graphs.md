@@ -56,9 +56,7 @@ Does the idosyncratic approach of Observable get in your way too much? Want to j
 <iframe height="204" scrolling="no" title="WNGgPyz" src="https://codepen.io/aaboyles/embed/WNGgPyz?height=204&theme-id=light&default-tab=result" frameborder="no" loading="lazy" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href='https://codepen.io/aaboyles/pen/WNGgPyz'>WNGgPyz</a> by Anthony Boyles
   (<a href='https://codepen.io/aaboyles'>@aaboyles</a>) on <a href='https://codepen.io'>CodePen</a>.
-</iframe>
-
-If the above is blank, try clicking "Rerun".
+</iframe>[If this is blank, try clicking "Rerun".](sidenote)
 
 ## Roll Your Own
 

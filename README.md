@@ -86,7 +86,7 @@ Note: if you intend to place links in your side- and margin- notes,
 
 ### Embedded Graphs
 
-[Uh, there are some options.](?q=pages/EmbeddingGraphs.md)
+While `uncompiled` is pretty opinionated about a lot of things (the type of servers it runs on, the layout of the pages, etc.) [There are a few viable options.](?q=pages/graphs.md)
 
 ## OK, I'm sold. How do I use it?
 
