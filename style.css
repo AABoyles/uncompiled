@@ -1,9 +1,10 @@
 header {
   position: fixed;
   top: 0px;
-  padding: 8px;
+  padding: 8px 0;
   width: 100%;
   background-color:inherit;
+  z-index: 1;
 }
 header > span {
   margin-right: 1rem;
