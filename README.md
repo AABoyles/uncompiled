@@ -8,6 +8,8 @@ A platform for writing static content in markdown, reading it in [Tufte-approved
 
 ## Quick Start
 
+[If you're looking for a specific piece of information that isn't on this page, <a href="https://aaboyles.github.io/uncompiled?q=pages/directory.md">check the directory</a>](marginnote)
+
 1. [Use the uncompiled repo as a template for your new repo.](https://github.com/AABoyles/uncompiled/generate)
 2. Write your content in [`README.md`](https://github.com/AABoyles/uncompiled/blob/main/README.md) (or any markdown file in any subdirectory you prefer).
 3. Configure your site using [config.json](https://github.com/AABoyles/uncompiled/blob/main/config.json) file.
