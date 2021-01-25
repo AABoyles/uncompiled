@@ -18,11 +18,11 @@
       self.config = config;
       document.querySelector('title').innerText = config.title;
       config.menu.forEach(addMenuItem);
+      header.classList.remove('hidden');
     });
 
-  let params = new URLSearchParams(document.location.search.substring(1));
-  let post = params.get('q') || 'README.md';
-  let main = document.querySelector('article');
+  let main = document.querySelector('main');
+  let article = document.querySelector('article');
 
   let converter = new showdown.Converter({
     'tables': true, 
@@ -39,30 +39,37 @@
     document.body.appendChild(script);
   };
 
-  fetch(post)
-    .then(res => res.text())
-    .then(md => {
-      let html = converter.makeHtml(md);
-      main.innerHTML = html;
+  let renderPage = page => {
+    main.classList.add('hidden');
+    fetch(page)
+      .then(res => res.text())
+      .then(md => {
+        let html = converter.makeHtml(md);
+        article.innerHTML = html;
 
-      document.querySelectorAll('pre code').forEach(hljs.highlightBlock);
+        document.querySelectorAll('pre code').forEach(hljs.highlightBlock);
 
-      renderMathInElement(main, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false},
-          {left: "\\(", right: "\\)", display: false},
-          {left: "\\[", right: "\\]", display: true}
-        ]
+        renderMathInElement(main, {
+          delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "$", right: "$", display: false},
+            {left: "\\(", right: "\\)", display: false},
+            {left: "\\[", right: "\\]", display: true}
+          ]
+        });
+
+        let content = parser.parseFromString(html, 'text/html');
+        let promises = [];
+        let scripts = [];
+        content.querySelectorAll('script').forEach(script => {
+          if(script.src) promises.push(loadScript(script.src));
+          else scripts.push(script.innerText);
+        });
+        Promise.all(promises).then(() => scripts.forEach(eval));
+        main.classList.remove('hidden');
       });
+  }
 
-      let content = parser.parseFromString(html, 'text/html');
-      let promises = [];
-      let scripts = [];
-      content.querySelectorAll('script').forEach(script => {
-        if(script.src) promises.push(loadScript(script.src));
-        else scripts.push(script.innerText);
-      });
-      Promise.all(promises).then(() => scripts.forEach(eval));
-    });
+  let params = new URLSearchParams(document.location.search.substring(1));
+  renderPage(params.get('q') || 'README.md');
 })();
