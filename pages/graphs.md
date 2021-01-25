@@ -109,19 +109,3 @@ svg.selectAll(".bar")
 There are a few things to note about this. First note that it's HTML, which is [always valid markdown](https://daringfireball.net/projects/markdown/syntax#html) ([except when it isn't](https://stackoverflow.com/questions/5266134/best-practice-for-allowing-markdown-in-python-while-preventing-xss-attacks/)). See that we create the `div` where we put the visualization as HTML--this allows us to place the visualization in the document flow where we expect it. If we didn't, we'd need to do some fancy counting-based nonsense to get it in the correct place.
 
 Also note that we can load external scripts by simply including a script tag with an `src`. There's a bit of weird hacking in `uncompiled` to get this to work at all. This gives me concerns about the long-term viability of such approaches. For example, one conceivable failure mode is that your imported script kicks off a long-running process, but your Javascript begins executing before it's ready. If you find that you cannot do something and think latency may be the culprit, I can only offer reasonable apologies and encourage you to leverage a solution that balances the flexibility you were looking for with the robustness of embedding (i.e. use an Observable Notebook).
-
-You're ignoring that? OK. One (bad) thing you can try is adding a wait-loop. Don't do this in general, but it will solve this specific problem on this specific platform. It goes a little something like this:
-
-```js
-function makeGraph(){ /* The code to do your thing */ }
-
-let waitloop = setInterval(() => {
-  if(typeof d3 == "undefined") return;
-  makeGraph();
-  clearInterval(waitloop);
-}, 1000);
-```
-
-All we've done set the browser to check every second if it has access to a global resource called `d3`. If it does, then we can go ahead and use it to generate a graph. If it doesn't, it waits 1000ms and tries again. Again, don't do this in general, but I can envision it solving a problem once in a while.
-
-...Which I hope throws into stark relief why I started this guide with embedding external visualizations. Just because we can do something does not mean we should. All the same, I won't hold it against you if you discover that you simply must manipulate something on the page directly yourself in order to accomplish your goals. Just be warned you're going to be fighting an uphill battle.
