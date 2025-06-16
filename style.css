@@ -1,3 +1,23 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #111111;
+  --table-border-color: lightgray;
+  --link-text-shadow: .03em 0 #fffff8, -.03em 0 #fffff8, 0 .03em #fffff8, 0 -.03em #fffff8, .06em 0 #fffff8, -.06em 0 #fffff8, .09em 0 #fffff8, -.09em 0 #fffff8, .12em 0 #fffff8, -.12em 0 #fffff8, .15em 0 #fffff8, -.15em 0 #fffff8;;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #222222;
+    --text-color: #eeeeee;
+    --table-border-color: #444444;
+    --link-text-shadow: none;
+  }
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
 header {
   position: fixed;
   top: 0px;
@@ -15,6 +35,9 @@ article {
   opacity: 1;
   transition: opacity 0.5s;
 }
+a {
+  text-shadow: var(--link-text-shadow) !important;
+}
 .hidden {
   visibility: hidden;
   transition: visibility 0s 0.5s;
@@ -24,7 +47,7 @@ article {
   transition: opacity 0.5s;
 }
 table {
-  border: 1px solid lightgray;
+  border: 1px solid var(--table-border-color);
   border-collapse: collapse;
   text-align: left;
 }
