@@ -14,6 +14,21 @@
   }
 }
 
+/* Dark/Light mode overrides */
+body.light-theme {
+  --bg-color: #ffffff !important;
+  --text-color: #111111 !important;
+  --table-border-color: lightgray !important;
+  --link-text-shadow: .03em 0 #fffff8, -.03em 0 #fffff8, 0 .03em #fffff8, 0 -.03em #fffff8, .06em 0 #fffff8, -.06em 0 #fffff8, .09em 0 #fffff8, -.09em 0 #fffff8, .12em 0 #fffff8, -.12em 0 #fffff8, .15em 0 #fffff8, -.15em 0 #fffff8 !important;
+}
+
+body.dark-theme {
+  --bg-color: #222222 !important;
+  --text-color: #eeeeee !important;
+  --table-border-color: #444444 !important;
+  --link-text-shadow: none !important;
+}
+
 body {
   background-color: var(--bg-color);
   color: var(--text-color);

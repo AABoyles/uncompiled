@@ -9,7 +9,7 @@
       node.innerHTML = `<a href="${item.url || config.baseURL || '#'}">${item.text}</a>`;
       if(item.style) node.style = item.style;
     }
-    header.append(node);
+    return header.appendChild(node);
   };
 
   fetch('config.json')
@@ -20,6 +20,35 @@
       config.menu.forEach(addMenuItem);
       header.classList.remove('hidden');
     });
+
+
+  // Dark mode toggle functionality
+  const darkModeToggle = addMenuItem('🌓');
+  const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+  
+  // Check for saved user preference, if any, on load of the website
+  const currentTheme = localStorage.getItem('theme');
+  if (currentTheme === 'dark') {
+    document.body.classList.toggle('dark-theme');
+    darkModeToggle.textContent = '🌞';
+  } else if (currentTheme === 'light') {
+    document.body.classList.toggle('light-theme');
+    darkModeToggle.textContent = '🌑';
+  }
+  
+  // Add toggle switch event listener
+  darkModeToggle.addEventListener('click', () => {
+    let theme;
+    if (prefersDarkScheme.matches) {
+      document.body.classList.toggle('light-theme');
+      theme = document.body.classList.contains('light-theme') ? 'light' : 'dark';
+    } else {
+      document.body.classList.toggle('dark-theme');
+      theme = document.body.classList.contains('dark-theme') ? 'dark' : 'light';
+    }
+    localStorage.setItem('theme', theme);
+    darkModeToggle.textContent = theme === 'dark' ? '🌞' : '🌑';
+  });
 
   let main = document.querySelector('main');
   let article = document.querySelector('article');
