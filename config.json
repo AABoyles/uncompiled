@@ -15,5 +15,6 @@
       "text": "Github",
       "url": "https://github.com/aaboyles/uncompiled"
     }
-  ]
+  ],
+  "apiURL": "https://api.github.com/repos/aaboyles/uncompiled"
 }

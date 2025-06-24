@@ -21,7 +21,6 @@
       header.classList.remove('hidden');
     });
 
-
   // Dark mode toggle functionality
   const darkModeToggle = addMenuItem('🌓');
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
