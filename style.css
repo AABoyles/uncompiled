@@ -148,6 +148,10 @@ body.dark-theme .copy-btn {
 .katex {
   font-size: 1em;
 }
+p.loading {
+  color: #888;
+  font-style: italic;
+}
 /* Anchor links on headings */
 h1, h2, h3, h4, h5, h6 {
   position: relative;

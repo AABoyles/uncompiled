@@ -19,6 +19,9 @@
       document.querySelector('title').innerText = config.title;
       config.menu.forEach(addMenuItem);
       header.classList.remove('hidden');
+    })
+    .catch(() => {
+      header.classList.remove('hidden');
     });
 
   // Dark mode toggle functionality
@@ -107,9 +110,18 @@
 
   let renderPage = async page => {
     main.classList.add('hidden');
+    article.innerHTML = '<p class="loading">Loading…</p>';
+    main.classList.remove('hidden');
     fetch(page)
-      .then(res => res.text())
+      .then(res => {
+        if (!res.ok) {
+          article.innerHTML = `<h1>Page not found</h1><p>Could not load <code>${page}</code> (HTTP ${res.status}).</p>`;
+          return null;
+        }
+        return res.text();
+      })
       .then(async md => {
+        if (md === null) return;
         md = await resolveIncludes(md, new Set([page]));
         const { meta, body } = parseFrontmatter(md);
         let html = converter.makeHtml(body);
@@ -203,6 +215,9 @@
             renderPage(nextPage);
           });
         });
+      })
+      .catch(err => {
+        article.innerHTML = `<h1>Failed to load page</h1><p>An error occurred while loading <code>${page}</code>.</p><pre>${err}</pre>`;
       });
   }
 
