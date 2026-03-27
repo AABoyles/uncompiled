@@ -157,7 +157,10 @@
           if(script.src) promises.push(loadScript(script.src));
           else scripts.push(script.innerText);
         });
-        Promise.all(promises).then(() => scripts.forEach(eval));
+        Promise.all(promises).then(() => {
+          scripts.forEach(eval);
+          main.classList.remove('hidden');
+        });
 
         // Add slug IDs and anchor links to all headings
         const slugCounts = {};
@@ -200,8 +203,6 @@
             renderPage(nextPage);
           });
         });
-
-        main.classList.remove('hidden');
       });
   }
 
