@@ -131,7 +131,11 @@
         md = await resolveIncludes(md, new Set([page]));
         const { meta, body } = parseFrontmatter(md);
         let html = converter.makeHtml(body);
-        article.innerHTML = html;
+        // Sanitize converted HTML before DOM injection to prevent XSS via
+        // inline event handlers (e.g. <img onerror="...">). Scripts are
+        // extracted from the raw html string below, so this does not affect
+        // intentional embedded page scripts.
+        article.innerHTML = DOMPurify.sanitize(html, { FORCE_BODY: true });
 
         // Render mermaid fenced blocks as diagrams before highlight.js runs
         article.querySelectorAll('pre code.language-mermaid').forEach(block => {
