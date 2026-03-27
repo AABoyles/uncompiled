@@ -51,6 +51,8 @@ console.log('Hello, World!');
 ```
 ~~~
 
+Each code block also has a **copy button** that appears on hover, so readers can grab snippets without selecting text manually.
+
 ### $\LaTeX$
 
 $\LaTeX$ is supported, via the excellent [KaTeX](https://katex.org/). For example, Here's Bayes Theorem:
@@ -86,15 +88,74 @@ Note: if you intend to place links in your side- and margin- notes,
 1. You'll need to write the links in HTML (because nested markdown links are a mess to parse).
 2. The link will need to extend from wherever it begins in the note to the end of the note (because nested markdown links are a mess to parse).
 
+### Diagrams
+
+[Mermaid](https://mermaid.js.org/) diagrams are rendered directly from a fenced code block tagged `mermaid`:
+
+~~~md
+```mermaid
+graph TD
+  A[Write Markdown] --> B[Push to GitHub]
+  B --> C[Site updates]
+```
+~~~
+
+Mermaid supports flowcharts, sequence diagrams, Gantt charts, entity-relationship diagrams, and more. The diagram theme automatically follows the current dark/light mode setting.
+
 ### Embedded Graphs
 
 While `uncompiled` is pretty opinionated about a lot of things (the type of servers it runs on, the layout of the pages, etc.) [There are a few viable options.](?q=pages/graphs.md)
+
+### Page Metadata (Frontmatter)
+
+You can add YAML frontmatter to any page to set its title and description. Place it at the very top of the file, enclosed in `---` fences:
+
+```md
+---
+title: My Post Title
+date: 2024-03-15
+description: A short summary used in the page index and link previews.
+tags: [writing, meta]
+---
+
+# Content starts here
+```
+
+The frontmatter block is stripped before rendering and never appears in the article. The `title` field overrides the browser tab title (otherwise derived from the first `#` heading), and `description` is written into `<meta name="description">`.
+
+### Content Transclusion
+
+You can inline the contents of another Markdown file using the `include:` link syntax:
+
+```md
+[](include:pages/bibliography.md)
+```
+
+This syntax renders as nothing in standard Markdown viewers (empty link text) but inlines the referenced file's content when viewed in `uncompiled`. Transclusion is recursive — included files can themselves include others — up to a depth of 5. Circular includes are detected and replaced with a warning rather than looping.
+
+### Page Index and Search
+
+Add a [`pages.json`](https://github.com/AABoyles/uncompiled/blob/main/pages.json) file at the root of your repo to maintain a content manifest. Each entry looks like:
+
+```json
+{
+  "title": "My Post",
+  "path": "pages/my-post.md",
+  "date": "2024-03-15",
+  "description": "A short summary.",
+  "tags": ["writing"]
+}
+```
+
+Once `pages.json` exists, the [page index](?q=pages/index.md) provides a filterable, searchable list of all your content — entirely client-side. See [the pages.json documentation](?q=pages/pages-json.md) for the full schema.
 
 ## OK, I'm sold. How do I use it?
 
 ### Write a post
 
 Make a regular Markdown document. I like to put them in [the `pages/` directory](https://github.com/AABoyles/uncompiled/tree/main/pages), but you can put them wherever. Just put the relative path in the address when linking to it.
+
+Every heading in a rendered page automatically gets a stable anchor link — hover over any heading to reveal the `#` link you can share to point readers directly to a section.
 
 ### Configurations
 
@@ -134,7 +195,7 @@ What's the difference between a blog and a more general website? I claim the fun
 
 We don't compile [(see above)](#sowhynocompiling), so we don't really know what's available the way blog-aware static site generators do. Other more conventional blog platforms (like Wordpress) stores and queries data from a server runtime, but we're restricted to just what can be accomplished with a file server (like Github pages provides) so we can't get an index of the pages at the time of pageload.
 
-The bottom line is, there's no automated way to create the kinds of features we expect from blogs given the constraints I'm trying to respect. So, not really a blog.
+The bottom line is, there's no *automated* way to create the kinds of features we expect from blogs given the constraints I'm trying to respect. However, the [`pages.json` manifest](#page-index-and-search) provides a manually-maintained index that gets you most of the way there — sorted listings, search, and a foundation for syndication — without a build step. So: not a blog, but closer than it used to be.
 
 ### So what's the catch?
 
