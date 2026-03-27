@@ -146,7 +146,7 @@
         mermaid.run({ querySelector: '.mermaid' });
 
         document.querySelectorAll('pre code').forEach(block => {
-          hljs.highlightBlock(block);
+          hljs.highlightElement(block);
           const btn = document.createElement('button');
           btn.className = 'copy-btn';
           btn.textContent = 'Copy';
