@@ -69,7 +69,14 @@
 
   let parser = new DOMParser();
 
+  // Security note: uncompiled intentionally executes scripts embedded in
+  // Markdown. The security model is that authors control all content in
+  // their own repository. Only serve content you trust.
   const loadScript = async function(url){
+    if (!url.startsWith('https://')) {
+      console.warn('[uncompiled] Blocked non-HTTPS script:', url);
+      return;
+    }
     let script   = document.createElement("script");
     script.type  = "text/javascript";
     await fetch(url).then(r => r.text().then(s => script.innerHTML = s));
@@ -180,7 +187,10 @@
           else scripts.push(script.innerText);
         });
         Promise.all(promises).then(() => {
-          scripts.forEach(eval);
+          scripts.forEach(script => {
+            try { eval(script); }
+            catch(e) { console.error('[uncompiled] Script error:', e); }
+          });
           main.classList.remove('hidden');
         });
 
