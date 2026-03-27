@@ -95,6 +95,12 @@
         });
         Promise.all(promises).then(() => scripts.forEach(eval));
 
+        // Update page title from first H1, falling back to config title
+        const h1 = article.querySelector('h1');
+        document.title = h1
+          ? `${h1.textContent.trim()} — ${(self.config && self.config.title) || ''}`
+          : (self.config && self.config.title) || '';
+
         // Intercept internal ?q= link clicks for SPA-style navigation
         article.querySelectorAll('a[href^="?q="]').forEach(a => {
           a.addEventListener('click', e => {
