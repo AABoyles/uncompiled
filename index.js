@@ -75,7 +75,19 @@
         let html = converter.makeHtml(md);
         article.innerHTML = html;
 
-        document.querySelectorAll('pre code').forEach(hljs.highlightBlock);
+        document.querySelectorAll('pre code').forEach(block => {
+          hljs.highlightBlock(block);
+          const btn = document.createElement('button');
+          btn.className = 'copy-btn';
+          btn.textContent = 'Copy';
+          btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(block.innerText).then(() => {
+              btn.textContent = 'Copied!';
+              setTimeout(() => btn.textContent = 'Copy', 2000);
+            });
+          });
+          block.parentElement.appendChild(btn);
+        });
 
         renderMathInElement(main, {
           delimiters: [

@@ -77,6 +77,38 @@ section > iframe {
 pre > code {
   margin-left: 0;
 }
+/* Copy button on code blocks */
+pre {
+  position: relative;
+}
+.copy-btn {
+  position: absolute;
+  top: 0.4em;
+  right: 0.4em;
+  padding: 0.15em 0.5em;
+  font-size: 0.75em;
+  background: #e8e8e8;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+pre:hover .copy-btn {
+  opacity: 1;
+}
+body.dark-theme .copy-btn {
+  background: #444;
+  border-color: #666;
+  color: #eee;
+}
+@media (prefers-color-scheme: dark) {
+  .copy-btn {
+    background: #444;
+    border-color: #666;
+    color: #eee;
+  }
+}
 .katex {
   font-size: 1em;
 }
