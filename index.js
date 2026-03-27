@@ -67,6 +67,18 @@
     document.body.appendChild(script);
   };
 
+  const parseFrontmatter = md => {
+    const match = md.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+    if (!match) return { meta: {}, body: md };
+    const meta = Object.fromEntries(
+      match[1].split('\n')
+        .map(line => line.match(/^(\w+):\s*(.+)$/))
+        .filter(Boolean)
+        .map(([, k, v]) => [k, v.trim()])
+    );
+    return { meta, body: match[2] };
+  };
+
   const MAX_INCLUDE_DEPTH = 5;
   const INCLUDE_PATTERN = /\[\]\(include:([^)]+)\)/g;
 
@@ -99,7 +111,8 @@
       .then(res => res.text())
       .then(async md => {
         md = await resolveIncludes(md, new Set([page]));
-        let html = converter.makeHtml(md);
+        const { meta, body } = parseFrontmatter(md);
+        let html = converter.makeHtml(body);
         article.innerHTML = html;
 
         // Render mermaid fenced blocks as diagrams before highlight.js runs
@@ -163,11 +176,20 @@
           h.appendChild(link);
         });
 
-        // Update page title from first H1, falling back to config title
+        // Update page title: frontmatter > first H1 > config title
         const h1 = article.querySelector('h1');
-        document.title = h1
-          ? `${h1.textContent.trim()} — ${(self.config && self.config.title) || ''}`
-          : (self.config && self.config.title) || '';
+        const pageTitle = meta.title || (h1 && h1.textContent.trim()) || '';
+        const siteTitle = (self.config && self.config.title) || '';
+        document.title = pageTitle ? `${pageTitle} — ${siteTitle}` : siteTitle;
+
+        // Set meta description from frontmatter if provided
+        let metaDesc = document.querySelector('meta[name="description"]');
+        if (!metaDesc) {
+          metaDesc = document.createElement('meta');
+          metaDesc.name = 'description';
+          document.head.appendChild(metaDesc);
+        }
+        metaDesc.content = meta.description || '';
 
         // Intercept internal ?q= link clicks for SPA-style navigation
         article.querySelectorAll('a[href^="?q="]').forEach(a => {
