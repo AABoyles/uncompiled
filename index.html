@@ -4,6 +4,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Content Security Policy
+       unsafe-eval is required for embedded page scripts (eval() in index.js).
+       unsafe-inline styles are required for Mermaid SVG output.
+       connect-src https: allows page scripts to fetch external data sources. -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' https://cdn.jsdelivr.net;
+    style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+    font-src 'self' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+    img-src 'self' data: https:;
+    connect-src 'self' https:;
+    object-src 'none';
+    frame-src 'none';
+  ">
   <title></title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tufte-css/1.8.0/tufte.min.css" integrity="sha384-j0J9eeNCJi6AEleJCjmNsA9pz6iQruUX+XeZU1gcOXcxbLYq/wh5H2cjfjLj955l" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css" integrity="sha384-4Y0nObtF3CbKnh+lpzmAVdAMtQXl+ganWiiv73RcGVdRdfVIya8Cao1C8ZsVRRDz" crossorigin="anonymous">
