@@ -75,6 +75,18 @@
         let html = converter.makeHtml(md);
         article.innerHTML = html;
 
+        // Render mermaid fenced blocks as diagrams before highlight.js runs
+        article.querySelectorAll('pre code.language-mermaid').forEach(block => {
+          const container = document.createElement('div');
+          container.className = 'mermaid';
+          container.textContent = block.innerText;
+          block.closest('pre').replaceWith(container);
+        });
+        const darkMode = document.body.classList.contains('dark-theme') ||
+          (!document.body.classList.contains('light-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        mermaid.initialize({ startOnLoad: false, theme: darkMode ? 'dark' : 'default' });
+        mermaid.run({ querySelector: '.mermaid' });
+
         document.querySelectorAll('pre code').forEach(block => {
           hljs.highlightBlock(block);
           const btn = document.createElement('button');
