@@ -109,6 +109,38 @@ body.dark-theme .copy-btn {
     color: #eee;
   }
 }
+/* Print styles */
+@media print {
+  header, .copy-btn, .anchor-link {
+    display: none !important;
+  }
+  .hidden {
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  body, article {
+    color: #000 !important;
+    background: #fff !important;
+  }
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #555;
+    font-style: italic;
+  }
+  a[href^="#"]::after,
+  a[href^="?"]::after {
+    content: none;
+  }
+  pre, code {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+  pre {
+    border: 1px solid #ccc;
+    padding: 0.5em;
+  }
+}
 .katex {
   font-size: 1em;
 }
