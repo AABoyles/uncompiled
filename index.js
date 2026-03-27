@@ -25,19 +25,25 @@
     });
 
   // Dark mode toggle functionality
-  const darkModeToggle = addMenuItem('🌓');
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-  
-  // Check for saved user preference, if any, on load of the website
   const currentTheme = localStorage.getItem('theme');
+
+  // Apply saved preference or system default on load
   if (currentTheme === 'dark') {
     document.body.classList.add('dark-theme');
-    darkModeToggle.textContent = '🌞';
   } else if (currentTheme === 'light') {
     document.body.classList.add('light-theme');
-    darkModeToggle.textContent = '🌑';
   }
-  
+
+  // Icon shows what you'll switch TO: 🌞 = currently dark (click for light), 🌑 = currently light (click for dark)
+  const isDark = () =>
+    document.body.classList.contains('dark-theme') ||
+    (!document.body.classList.contains('light-theme') && prefersDarkScheme.matches);
+
+  const darkModeToggle = addMenuItem(isDark() ? '🌞' : '🌑');
+  darkModeToggle.setAttribute('aria-label', 'Toggle dark mode');
+  darkModeToggle.setAttribute('title', 'Toggle dark mode');
+
   // Add toggle switch event listener
   darkModeToggle.addEventListener('click', () => {
     let theme;
