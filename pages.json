@@ -1,0 +1,44 @@
+[
+  {
+    "title": "uncompiled README",
+    "path": "README.md",
+    "date": "2021-01-01",
+    "description": "Overview of uncompiled: what it is, how to use it, and its features.",
+    "tags": ["meta", "documentation"]
+  },
+  {
+    "title": "Configuration",
+    "path": "pages/config.md",
+    "date": "2021-01-01",
+    "description": "Documentation for the config.json settings file.",
+    "tags": ["documentation", "configuration"]
+  },
+  {
+    "title": "Embedding Graphs",
+    "path": "pages/graphs.md",
+    "date": "2021-01-01",
+    "description": "Options for embedding charts and graphs in uncompiled pages.",
+    "tags": ["documentation", "graphs"]
+  },
+  {
+    "title": "Using uncompiled from GitHub",
+    "path": "pages/github.md",
+    "date": "2021-01-01",
+    "description": "How to write and publish content entirely from the GitHub web UI.",
+    "tags": ["documentation", "github"]
+  },
+  {
+    "title": "Using uncompiled with RMarkdown",
+    "path": "pages/rmarkdown.md",
+    "date": "2021-01-01",
+    "description": "How to use RMarkdown output as an uncompiled page.",
+    "tags": ["documentation", "rmarkdown"]
+  },
+  {
+    "title": "Directory",
+    "path": "pages/directory.md",
+    "date": "2021-01-01",
+    "description": "A directory of all uncompiled documentation pages and sites.",
+    "tags": ["meta", "documentation"]
+  }
+]
