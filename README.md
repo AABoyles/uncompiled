@@ -90,7 +90,7 @@ Note: if you intend to place links in your side- and margin- notes,
 
 ### Diagrams
 
-[Mermaid](https://mermaid.js.org/) diagrams are rendered directly from a fenced code block tagged `mermaid`:
+[Mermaid](https://mermaid.js.org/) diagrams are rendered directly from a fenced code block tagged `mermaid`, like so:
 
 ~~~md
 ```mermaid
@@ -99,6 +99,14 @@ graph TD
   B --> C[Site updates]
 ```
 ~~~
+
+which renders as:
+
+```mermaid
+graph TD
+  A[Write Markdown] --> B[Push to GitHub]
+  B --> C[Site updates]
+```
 
 Mermaid supports flowcharts, sequence diagrams, Gantt charts, entity-relationship diagrams, and more. The diagram theme automatically follows the current dark/light mode setting.
 
