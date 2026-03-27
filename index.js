@@ -94,10 +94,29 @@
           else scripts.push(script.innerText);
         });
         Promise.all(promises).then(() => scripts.forEach(eval));
+
+        // Intercept internal ?q= link clicks for SPA-style navigation
+        article.querySelectorAll('a[href^="?q="]').forEach(a => {
+          a.addEventListener('click', e => {
+            e.preventDefault();
+            let nextPage = new URLSearchParams(a.getAttribute('href').substring(1)).get('q');
+            history.pushState({ page: nextPage }, '', a.getAttribute('href'));
+            renderPage(nextPage);
+          });
+        });
+
         main.classList.remove('hidden');
       });
   }
 
+  // Handle browser back/forward navigation
+  window.addEventListener('popstate', e => {
+    let page = (e.state && e.state.page) || 'README.md';
+    renderPage(page);
+  });
+
   let params = new URLSearchParams(document.location.search.substring(1));
-  renderPage(params.get('q') || 'README.md');
+  let initialPage = params.get('q') || 'README.md';
+  history.replaceState({ page: initialPage }, '', initialPage === 'README.md' ? document.location.href : '?q=' + initialPage);
+  renderPage(initialPage);
 })();
