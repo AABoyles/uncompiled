@@ -67,11 +67,38 @@
     document.body.appendChild(script);
   };
 
-  let renderPage = page => {
+  const MAX_INCLUDE_DEPTH = 5;
+  const INCLUDE_PATTERN = /\[\]\(include:([^)]+)\)/g;
+
+  const resolveIncludes = async (md, visited = new Set(), depth = 0) => {
+    if (depth >= MAX_INCLUDE_DEPTH) return md;
+    const matches = [...md.matchAll(INCLUDE_PATTERN)];
+    for (const match of matches) {
+      const path = match[1].trim();
+      if (visited.has(path)) {
+        md = md.replace(match[0], `> ⚠️ *Include cycle detected: \`${path}\`*`);
+        continue;
+      }
+      const res = await fetch(path);
+      if (!res.ok) {
+        md = md.replace(match[0], `> ⚠️ *Could not include \`${path}\` (${res.status})*`);
+        continue;
+      }
+      const included = await res.text();
+      const childVisited = new Set(visited);
+      childVisited.add(path);
+      const resolved = await resolveIncludes(included, childVisited, depth + 1);
+      md = md.replace(match[0], resolved);
+    }
+    return md;
+  };
+
+  let renderPage = async page => {
     main.classList.add('hidden');
     fetch(page)
       .then(res => res.text())
-      .then(md => {
+      .then(async md => {
+        md = await resolveIncludes(md, new Set([page]));
         let html = converter.makeHtml(md);
         article.innerHTML = html;
 
