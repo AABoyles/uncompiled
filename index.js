@@ -95,6 +95,23 @@
         });
         Promise.all(promises).then(() => scripts.forEach(eval));
 
+        // Add slug IDs and anchor links to all headings
+        const slugCounts = {};
+        article.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach(h => {
+          let slug = h.textContent.trim().toLowerCase()
+            .replace(/[^\w\s-]/g, '')
+            .replace(/\s+/g, '-');
+          slugCounts[slug] = (slugCounts[slug] || 0) + 1;
+          if (slugCounts[slug] > 1) slug += '-' + slugCounts[slug];
+          h.id = slug;
+          const link = document.createElement('a');
+          link.href = '#' + slug;
+          link.className = 'anchor-link';
+          link.setAttribute('aria-hidden', 'true');
+          link.textContent = '#';
+          h.appendChild(link);
+        });
+
         // Update page title from first H1, falling back to config title
         const h1 = article.querySelector('h1');
         document.title = h1
