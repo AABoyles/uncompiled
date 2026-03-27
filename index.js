@@ -15,7 +15,7 @@
   fetch('config.json')
     .then(res => res.json())
     .then(config => {
-      self.config = config;
+      window.__uncompiled = Object.freeze(config);
       document.querySelector('title').innerText = config.title;
       config.menu.forEach(addMenuItem);
       header.classList.remove('hidden');
@@ -200,7 +200,7 @@
         // Update page title: frontmatter > first H1 > config title
         const h1 = article.querySelector('h1');
         const pageTitle = meta.title || (h1 && h1.textContent.trim()) || '';
-        const siteTitle = (self.config && self.config.title) || '';
+        const siteTitle = (window.__uncompiled && window.__uncompiled.title) || '';
         document.title = pageTitle ? `${pageTitle} — ${siteTitle}` : siteTitle;
 
         // Set meta description from frontmatter if provided

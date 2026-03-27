@@ -19,7 +19,8 @@
       .join(' ');
   }
 
-  fetch(`${config.apiURL}/contents/pages`).then(r => r.json()).then(d => {
+  // window.__uncompiled is set by index.js and exposes the frozen site config
+  fetch(`${window.__uncompiled.apiURL}/contents/pages`).then(r => r.json()).then(d => {
     let files = d.filter(file => file.name.substring(file.name.length - 3) == '.md');
     let tbody = document.querySelector('tbody');
     files.forEach(file => {
