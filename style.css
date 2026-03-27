@@ -33,6 +33,9 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
 }
+html {
+  scroll-padding-top: 60px;
+}
 header {
   position: fixed;
   top: 0px;
