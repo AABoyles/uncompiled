@@ -37,6 +37,16 @@ The `"menu"` attribute is an array of either Objects or Strings (or a mix of the
 
 If an element is an object, it is assumed to have `"text"` and `"url"` attributes, which are used to set the text that appears and the URL that clicking on it should lead to, respectively. (If you don't set a `url`, it defaults to [`baseURL`](#baseURL)). If there's a `"style"` attribute present, it will also set the style of that menu element to whatever that attribute is (presumably a valid CSS string, but there's no guardrails here).
 
+### `trustedScriptHosts`
+
+Markdown pages may pull in external JavaScript with `<script src="...">` tags (see [Graphs](?q=pages/graphs.md)). Because that's code you don't control, `uncompiled` is picky about it. Scripts served from your own site are always allowed. A script from anywhere else is loaded only if:
+
+1. its URL is HTTPS,
+2. its hostname appears in the `"trustedScriptHosts"` array, and
+3. the tag carries an `integrity` attribute with a [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hash (`sha256-`, `sha384-` or `sha512-`), which the browser verifies before running anything.
+
+Anything else is skipped, with a warning in the browser console. If you omit `"trustedScriptHosts"`, it defaults to `["cdn.jsdelivr.net"]`; set it to `[]` to forbid external scripts entirely. Hostnames must match exactly (no wildcards). If you add a host here, you must also add it to the `script-src` directive of the Content Security Policy in [index.html](https://github.com/AABoyles/uncompiled/blob/main/index.html), or the browser will refuse it anyway.
+
 ## Advanced
 
 If you'd like to make more advanced modifications to the system, you'll need to get your hands a little dirtier.

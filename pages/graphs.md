@@ -63,7 +63,7 @@ Does the idosyncratic approach of Observable get in your way too much? Want to j
 If you absolutely must do it yourself, as it were, there is one final option. You can write your own Javascript and drop it into your markdown. For example, here's our meaningless bar chart made with [D3](https://d3js.org/):
 
 <div id="d3graph"></div>
-<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js" integrity="sha384-ma33ZEb8L5emtidZhYJFZNIFdht2E8f5wHQMKQGom0aIx9rRKm86XXCjGxOISpM9" crossorigin="anonymous"></script>
 <script>
   let width = window.innerWidth * 0.55;
   let height = 100;
@@ -86,7 +86,7 @@ The code to accomplish this is reasonably simple[Uh, for a D3 visualization. I w
 
 ```md
 <div id="d3graph"></div>
-<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js" integrity="sha384-ma33ZEb8L5emtidZhYJFZNIFdht2E8f5wHQMKQGom0aIx9rRKm86XXCjGxOISpM9" crossorigin="anonymous"></script>
 <script>
 let width = window.innerWidth * 0.55;
 let height = 100;
@@ -105,6 +105,8 @@ svg.selectAll(".bar")
   .attr("fill", "blue");
 </script>
 ```
+
+Also note the `integrity` attribute on the external script. `uncompiled` will only load a cross-origin script from Markdown if its host is on the allow-list (see [`trustedScriptHosts`](?q=pages/config.md)) *and* it carries a [Subresource Integrity](https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity) hash, so pin an exact version and generate the hash with something like `curl -s <url> | openssl dgst -sha384 -binary | openssl base64 -A`. Scripts that fail either check are skipped with a warning in the console.
 
 There are a few things to note about this. First note that it's HTML, which is [always valid markdown](https://daringfireball.net/projects/markdown/syntax#html) ([except when it isn't](https://stackoverflow.com/questions/5266134/best-practice-for-allowing-markdown-in-python-while-preventing-xss-attacks/)). See that we create the `div` where we put the visualization as HTML--this allows us to place the visualization in the document flow where we expect it. If we didn't, we'd need to do some fancy counting-based nonsense to get it in the correct place.
 
