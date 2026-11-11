@@ -16,5 +16,6 @@
       "url": "https://github.com/aaboyles/uncompiled"
     }
   ],
+  "trustedScriptHosts": ["cdn.jsdelivr.net"],
   "apiURL": "https://api.github.com/repos/aaboyles/uncompiled"
 }

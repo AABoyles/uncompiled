@@ -12,16 +12,18 @@
     return header.appendChild(node);
   };
 
-  fetch('config.json')
+  const configLoaded = fetch('config.json')
     .then(res => res.json())
     .then(config => {
       window.__uncompiled = Object.freeze(config);
       document.querySelector('title').innerText = config.title;
       config.menu.forEach(addMenuItem);
       header.classList.remove('hidden');
+      return config;
     })
     .catch(() => {
       header.classList.remove('hidden');
+      return {};
     });
 
   // Dark mode toggle functionality
@@ -72,15 +74,52 @@
   // Security note: uncompiled intentionally executes scripts embedded in
   // Markdown. The security model is that authors control all content in
   // their own repository. Only serve content you trust.
-  const loadScript = async function(url){
-    if (!url.startsWith('https://')) {
-      console.warn('[uncompiled] Blocked non-HTTPS script:', url);
-      return;
+  //
+  // External <script src> tags in Markdown are restricted further, since
+  // they pull in code the author does not control:
+  //   - same-origin scripts are always allowed;
+  //   - cross-origin scripts must be HTTPS, come from a host on the
+  //     allow-list (config.json "trustedScriptHosts"), and carry a
+  //     Subresource Integrity hash, which the browser verifies.
+  // The host must also be permitted by the CSP script-src in index.html.
+  const DEFAULT_TRUSTED_SCRIPT_HOSTS = ['cdn.jsdelivr.net'];
+  const SRI_PATTERN = /^(sha(256|384|512)-[A-Za-z0-9+/]+={0,2})(\s+sha(256|384|512)-[A-Za-z0-9+/]+={0,2})*$/;
+
+  const blockScript = (src, reason) => {
+    console.warn(`[uncompiled] Blocked script ${src}: ${reason}`);
+  };
+
+  const loadScript = async function(src, integrity){
+    let url;
+    try { url = new URL(src, document.baseURI); }
+    catch(e) { return blockScript(src, 'invalid URL'); }
+
+    let script = document.createElement('script');
+    if (url.origin !== location.origin) {
+      const config = await configLoaded;
+      const trusted = Array.isArray(config.trustedScriptHosts)
+        ? config.trustedScriptHosts
+        : DEFAULT_TRUSTED_SCRIPT_HOSTS;
+      if (url.protocol !== 'https:') return blockScript(src, 'not HTTPS');
+      if (!trusted.includes(url.hostname)) {
+        return blockScript(src, `host "${url.hostname}" is not in trustedScriptHosts`);
+      }
+      integrity = (integrity || '').trim();
+      if (!SRI_PATTERN.test(integrity)) {
+        return blockScript(src, 'missing or malformed integrity attribute (sha256/sha384/sha512 required)');
+      }
+      script.integrity = integrity;
+      script.crossOrigin = 'anonymous';
     }
-    let script   = document.createElement("script");
-    script.type  = "text/javascript";
-    await fetch(url).then(r => r.text().then(s => script.innerHTML = s));
-    document.body.appendChild(script);
+    return new Promise(resolve => {
+      script.onload = resolve;
+      script.onerror = () => {
+        console.error('[uncompiled] Failed to load script (network error, CSP, or integrity mismatch):', url.href);
+        resolve();
+      };
+      script.src = url.href;
+      document.body.appendChild(script);
+    });
   };
 
   const parseFrontmatter = md => {
@@ -183,7 +222,7 @@
         let promises = [];
         let scripts = [];
         content.querySelectorAll('script').forEach(script => {
-          if(script.src) promises.push(loadScript(script.src));
+          if(script.hasAttribute('src')) promises.push(loadScript(script.getAttribute('src'), script.getAttribute('integrity')));
           else scripts.push(script.innerText);
         });
         Promise.all(promises).then(() => {
