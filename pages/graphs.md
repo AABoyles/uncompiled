@@ -63,7 +63,7 @@ Does the idosyncratic approach of Observable get in your way too much? Want to j
 If you absolutely must do it yourself, as it were, there is one final option. You can write your own Javascript and drop it into your markdown. For example, here's our meaningless bar chart made with [D3](https://d3js.org/):
 
 <div id="d3graph"></div>
-<script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js" integrity="sha384-ma33ZEb8L5emtidZhYJFZNIFdht2E8f5wHQMKQGom0aIx9rRKm86XXCjGxOISpM9" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.2/dist/d3.min.js" integrity="sha384-LxfWGZyh6PaLjBRPf7NWiEYs9Mn0UQ6ZmqbLLZhxlOBBNWF2a2K0Pfc5efkrNnhQ" crossorigin="anonymous"></script>
 <script>
   let width = window.innerWidth * 0.55;
   let height = 100;
@@ -86,7 +86,7 @@ The code to accomplish this is reasonably simple[Uh, for a D3 visualization. I w
 
 ```md
 <div id="d3graph"></div>
-<script src="https://cdn.jsdelivr.net/npm/d3@6.7.0/dist/d3.min.js" integrity="sha384-ma33ZEb8L5emtidZhYJFZNIFdht2E8f5wHQMKQGom0aIx9rRKm86XXCjGxOISpM9" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.2/dist/d3.min.js" integrity="sha384-LxfWGZyh6PaLjBRPf7NWiEYs9Mn0UQ6ZmqbLLZhxlOBBNWF2a2K0Pfc5efkrNnhQ" crossorigin="anonymous"></script>
 <script>
 let width = window.innerWidth * 0.55;
 let height = 100;
