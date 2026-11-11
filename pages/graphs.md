@@ -12,6 +12,42 @@ const data = [1, 2, 5, 7, 10, 20, 33, 40, 70, 100];
 
 For any of these approaches, you'll need to make some typesetting choices. Do you want the graph to occupy the same space as the main column of text, or the full page? You will (likely) need to edit the styling on the embeds accordingly. Pay attention wherever you see a `width` or a `height`.
 
+## Vega-Lite
+
+The option with the least ceremony is built in. Write a [Vega-Lite](https://vega.github.io/vega-lite/) specification in a code fence tagged `vega-lite`, and `uncompiled` draws it in place:
+
+~~~md
+```vega-lite
+{
+  "data": {"values": [1, 2, 5, 7, 10, 20, 33, 40, 70, 100]},
+  "transform": [{"window": [{"op": "row_number", "as": "index"}]}],
+  "width": "container",
+  "height": 200,
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "index", "type": "ordinal", "title": null},
+    "y": {"field": "data", "type": "quantitative", "title": null}
+  }
+}
+```
+~~~
+
+```vega-lite
+{
+  "data": {"values": [1, 2, 5, 7, 10, 20, 33, 40, 70, 100]},
+  "transform": [{"window": [{"op": "row_number", "as": "index"}]}],
+  "width": "container",
+  "height": 200,
+  "mark": "bar",
+  "encoding": {
+    "x": {"field": "index", "type": "ordinal", "title": null},
+    "y": {"field": "data", "type": "quantitative", "title": null}
+  }
+}
+```
+
+There's no embed code to copy, no external account, and the chart lives in your repository as text. If your data is in a file, replace `values` with `"url": "path/to/data.csv"`. The rest of this page covers the alternatives, for when you want something Vega-Lite doesn't do or you already have a chart somewhere else.
+
 ## External Images
 
 If you perform your analysis in a local tool (e.g. Excel, SPSS, Stata, etc.), you probably export images. To show such graphs in `uncompiled`, you can simply post the image somewhere online (e.g. your `uncompiled` repository) and create a markdown image linking to it, like so:
