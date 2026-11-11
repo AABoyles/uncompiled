@@ -64,7 +64,9 @@
   let article = document.querySelector('article');
 
   let converter = new showdown.Converter({
-    'tables': true, 
+    'tables': true,
+    'strikethrough': true,
+    'tasklists': true,
     'simplifiedAutoLink': true,
     'extensions': ['tufte']
   });
@@ -89,12 +91,26 @@
     console.warn(`[uncompiled] Blocked script ${src}: ${reason}`);
   };
 
+  const injectScript = (href, integrity) => new Promise(resolve => {
+    let script = document.createElement('script');
+    if (integrity) {
+      script.integrity = integrity;
+      script.crossOrigin = 'anonymous';
+    }
+    script.onload = resolve;
+    script.onerror = () => {
+      console.error('[uncompiled] Failed to load script (network error, CSP, or integrity mismatch):', href);
+      resolve();
+    };
+    script.src = href;
+    document.body.appendChild(script);
+  });
+
   const loadScript = async function(src, integrity){
     let url;
     try { url = new URL(src, document.baseURI); }
     catch(e) { return blockScript(src, 'invalid URL'); }
 
-    let script = document.createElement('script');
     if (url.origin !== location.origin) {
       const config = await configLoaded;
       const trusted = Array.isArray(config.trustedScriptHosts)
@@ -108,17 +124,129 @@
       if (!SRI_PATTERN.test(integrity)) {
         return blockScript(src, 'missing or malformed integrity attribute (sha256/sha384/sha512 required)');
       }
-      script.integrity = integrity;
-      script.crossOrigin = 'anonymous';
+    } else {
+      integrity = null;
     }
-    return new Promise(resolve => {
-      script.onload = resolve;
-      script.onerror = () => {
-        console.error('[uncompiled] Failed to load script (network error, CSP, or integrity mismatch):', url.href);
-        resolve();
+    return injectScript(url.href, integrity);
+  };
+
+  // Vega-Lite is only needed by pages that contain a chart block, so it is
+  // loaded on demand rather than from index.html. These are first-party
+  // choices pinned by version and SRI hash, independent of trustedScriptHosts.
+  const VEGA_SCRIPTS = [
+    ['https://cdn.jsdelivr.net/npm/vega@6.4.0/build/vega.min.js', 'sha384-VKdcJr3ZaBIJMbVcopTAI/JEuUkSY6qnwVu9iLuw0DnQ9gQ1JjsfZJhXFQAgNi43'],
+    ['https://cdn.jsdelivr.net/npm/vega-lite@6.5.0/build/vega-lite.min.js', 'sha384-pV2l7nzmyxZh02knvUH7N8zvtyCYsYiGt+SsE/emG/dFiBI6G0YJZFZ2FzEX72P3'],
+    ['https://cdn.jsdelivr.net/npm/vega-embed@7.3.0/build/vega-embed.min.js', 'sha384-Muy1QRxYFeNrA1zShc1KtN4OfipkR/61gt+HWqN57c1Zxu3Oe16TsilsruVVjfKL']
+  ];
+  let vegaLoading = null;
+  const loadVega = () => {
+    if (!vegaLoading) {
+      // Sequential: vega-lite and vega-embed expect the vega global to exist.
+      vegaLoading = VEGA_SCRIPTS.reduce(
+        (chain, [src, integrity]) => chain.then(() => injectScript(src, integrity)),
+        Promise.resolve()
+      );
+    }
+    return vegaLoading;
+  };
+
+  const blockError = (el, title, err) => {
+    const box = document.createElement('pre');
+    box.className = 'render-error';
+    box.textContent = `${title}: ${err && err.message ? err.message : err}`;
+    el.replaceWith(box);
+  };
+
+  const renderVegaBlocks = async blocks => {
+    if (!blocks.length) return;
+    // Parse first so a typo is reported without downloading anything.
+    const charts = [];
+    blocks.forEach(block => {
+      const container = document.createElement('div');
+      container.className = 'vega-chart';
+      const pre = block.closest('pre');
+      try {
+        // vega-embed restyles its target element, so give it an inner
+        // element and keep the column width on the outer one.
+        const target = container.appendChild(document.createElement('div'));
+        charts.push([target, JSON.parse(block.textContent)]);
+        pre.replaceWith(container);
+      } catch (e) {
+        blockError(pre, 'Invalid chart JSON', e);
+      }
+    });
+    if (!charts.length) return;
+    await loadVega();
+    await Promise.all(charts.map(([target, spec]) => {
+      const container = target.parentElement;
+      if (typeof vegaEmbed === 'undefined') {
+        return blockError(container, 'Chart error', 'could not load Vega-Lite');
+      }
+      return vegaEmbed(target, spec, {
+        actions: false,
+        renderer: 'svg',
+        theme: isDark() ? 'dark' : undefined
+      }).catch(e => blockError(container, 'Chart error', e));
+    }));
+  };
+
+  // Minimal RFC 4180 parser: quoted fields, escaped quotes (""), and
+  // newlines inside quotes.
+  const parseCSV = text => {
+    const rows = [];
+    let row = [], field = '', quoted = false;
+    for (let i = 0; i < text.length; i++) {
+      const c = text[i];
+      if (quoted) {
+        if (c === '"') {
+          if (text[i + 1] === '"') { field += '"'; i++; }
+          else quoted = false;
+        } else field += c;
+      } else if (c === '"' && field === '') {
+        quoted = true;
+      } else if (c === ',') {
+        row.push(field); field = '';
+      } else if (c === '\n' || c === '\r') {
+        if (c === '\r' && text[i + 1] === '\n') i++;
+        row.push(field); field = '';
+        rows.push(row); row = [];
+      } else field += c;
+    }
+    if (field !== '' || row.length) { row.push(field); rows.push(row); }
+    return rows.filter(r => r.length > 1 || r[0].trim() !== '');
+  };
+
+  const NUMERIC_CELL = /^\s*[-+]?[$€£]?\d[\d,]*(\.\d+)?%?\s*$/;
+
+  const renderCSVBlocks = blocks => {
+    blocks.forEach(block => {
+      const rows = parseCSV(block.textContent);
+      if (!rows.length) return;
+      const [head, ...body] = rows;
+      const width = Math.max(...rows.map(r => r.length));
+      // Right-align columns whose non-empty cells are all numbers.
+      const numeric = Array.from({ length: width }, (_, i) => {
+        const cells = body.map(r => r[i] || '').filter(v => v.trim() !== '');
+        return cells.length > 0 && cells.every(v => NUMERIC_CELL.test(v));
+      });
+      const table = document.createElement('table');
+      table.className = 'csv-table';
+      const addRow = (parent, cells, tag) => {
+        const tr = parent.insertRow();
+        for (let i = 0; i < width; i++) {
+          const cell = document.createElement(tag);
+          cell.textContent = (cells[i] || '').trim();
+          if (numeric[i]) cell.className = 'numeric';
+          tr.appendChild(cell);
+        }
       };
-      script.src = url.href;
-      document.body.appendChild(script);
+      addRow(table.createTHead(), head, 'th');
+      const tbody = table.createTBody();
+      body.forEach(r => addRow(tbody, r, 'td'));
+      const wrapper = document.createElement('div');
+      wrapper.className = 'table-wrapper';
+      wrapper.appendChild(table);
+      block.closest('pre').replaceWith(wrapper);
     });
   };
 
@@ -137,25 +265,51 @@
   const MAX_INCLUDE_DEPTH = 5;
   const INCLUDE_PATTERN = /\[\]\(include:([^)]+)\)/g;
 
+  // Include directives shown inside fenced code blocks are documentation,
+  // not directives, so they are left alone.
+  const FENCE_PATTERN = /^(`{3,}|~{3,})[^\n]*\n[\s\S]*?^\1[ \t]*$/gm;
+  const outsideFences = (md, pattern) => {
+    const fences = [...md.matchAll(FENCE_PATTERN)].map(m => [m.index, m.index + m[0].length]);
+    return [...md.matchAll(pattern)].filter(m => !fences.some(([a, b]) => m.index >= a && m.index < b));
+  };
+  // Replace matches last-to-first so earlier match offsets stay valid.
+  const spliceMatch = (md, match, text) =>
+    md.slice(0, match.index) + text + md.slice(match.index + match[0].length);
+
+  // [](csv:path/to/file.csv) pulls a CSV file in as a csv code block, which
+  // renderCSVBlocks then turns into a table.
+  const CSV_PATTERN = /\[\]\(csv:([^)]+)\)/g;
+
+  const resolveCSVIncludes = async md => {
+    for (const match of outsideFences(md, CSV_PATTERN).reverse()) {
+      const path = match[1].trim();
+      const res = await fetch(path).catch(() => null);
+      const replacement = res && res.ok
+        ? '\n\n~~~~csv\n' + (await res.text()).trim() + '\n~~~~\n\n'
+        : `> ⚠️ *Could not load CSV \`${path}\`${res ? ` (${res.status})` : ''}*`;
+      md = spliceMatch(md, match, replacement);
+    }
+    return md;
+  };
+
   const resolveIncludes = async (md, visited = new Set(), depth = 0) => {
     if (depth >= MAX_INCLUDE_DEPTH) return md;
-    const matches = [...md.matchAll(INCLUDE_PATTERN)];
-    for (const match of matches) {
+    for (const match of outsideFences(md, INCLUDE_PATTERN).reverse()) {
       const path = match[1].trim();
       if (visited.has(path)) {
-        md = md.replace(match[0], `> ⚠️ *Include cycle detected: \`${path}\`*`);
+        md = spliceMatch(md, match, `> ⚠️ *Include cycle detected: \`${path}\`*`);
         continue;
       }
       const res = await fetch(path);
       if (!res.ok) {
-        md = md.replace(match[0], `> ⚠️ *Could not include \`${path}\` (${res.status})*`);
+        md = spliceMatch(md, match, `> ⚠️ *Could not include \`${path}\` (${res.status})*`);
         continue;
       }
       const included = await res.text();
       const childVisited = new Set(visited);
       childVisited.add(path);
       const resolved = await resolveIncludes(included, childVisited, depth + 1);
-      md = md.replace(match[0], resolved);
+      md = spliceMatch(md, match, resolved);
     }
     return md;
   };
@@ -175,6 +329,7 @@
       .then(async md => {
         if (md === null) return;
         md = await resolveIncludes(md, new Set([page]));
+        md = await resolveCSVIncludes(md);
         const { meta, body } = parseFrontmatter(md);
         let html = converter.makeHtml(body);
         // Sanitize converted HTML before DOM injection to prevent XSS via
@@ -183,6 +338,12 @@
         // intentional embedded page scripts.
         article.innerHTML = DOMPurify.sanitize(html, { FORCE_BODY: true });
 
+        // Turn csv and vega-lite fenced blocks into tables and charts
+        // before highlight.js runs. Charts load their library on demand and
+        // fill in asynchronously.
+        renderCSVBlocks(article.querySelectorAll('pre code.language-csv'));
+        renderVegaBlocks(article.querySelectorAll('pre code.language-vega-lite'));
+
         // Render mermaid fenced blocks as diagrams before highlight.js runs
         article.querySelectorAll('pre code.language-mermaid').forEach(block => {
           const container = document.createElement('div');
@@ -190,9 +351,7 @@
           container.textContent = block.innerText;
           block.closest('pre').replaceWith(container);
         });
-        const darkMode = document.body.classList.contains('dark-theme') ||
-          (!document.body.classList.contains('light-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-        mermaid.initialize({ startOnLoad: false, theme: darkMode ? 'dark' : 'default' });
+        mermaid.initialize({ startOnLoad: false, theme: isDark() ? 'dark' : 'default' });
         mermaid.run({ querySelector: '.mermaid' });
 
         document.querySelectorAll('pre code').forEach(block => {

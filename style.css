@@ -174,3 +174,36 @@ h5:hover .anchor-link,
 h6:hover .anchor-link {
   opacity: 1;
 }
+.table-wrapper {
+  overflow-x: auto;
+  width: 55%;
+  margin: 1.4rem 0;
+}
+.csv-table .numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.vega-chart {
+  width: 55%;
+  margin: 1.4rem 0;
+}
+.vega-chart > div {
+  display: block;
+  width: 100%;
+}
+.render-error {
+  width: 52.5%;
+  color: #b00020;
+  white-space: pre-wrap;
+}
+body.dark-theme .render-error {
+  color: #ff8a80;
+}
+li.task-list-item input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+@media (max-width: 760px) {
+  .table-wrapper, .vega-chart, .render-error {
+    width: 100%;
+  }
+}

@@ -35,6 +35,46 @@ It's just a regular markdown table.
 | Yup!            |
 ```
 
+You can also write a table as CSV, which is much less fiddly for anything with more than a few rows. Put it in a code fence tagged `csv`; the first row becomes the header, and columns that contain only numbers are right-aligned:
+
+~~~md
+```csv
+Renderer,Purpose,Size (KB)
+Showdown,Markdown,75
+KaTeX,Math,271
+"highlight.js, common languages",Code,127
+```
+~~~
+
+```csv
+Renderer,Purpose,Size (KB)
+Showdown,Markdown,75
+KaTeX,Math,271
+"highlight.js, common languages",Code,127
+```
+
+Or keep the data in its own file and point at it with the `csv:` link syntax. Like [transclusion](#content-transclusion), it renders as nothing in other Markdown viewers:
+
+```md
+[](csv:data/example.csv)
+```
+
+[](csv:data/example.csv)
+
+### Task Lists and Strikethrough
+
+GitHub-style task lists and ~~strikethrough~~ work as you'd expect:
+
+```md
+- [x] Write some markdown
+- [ ] ~~Compile it~~
+- [ ] Profit
+```
+
+- [x] Write some markdown
+- [ ] ~~Compile it~~
+- [ ] Profit
+
 ### Syntax Highlighting
 
 Syntax Highlighting is made possible by [highlight.js](https://highlightjs.org/)
@@ -109,6 +149,40 @@ graph TD
 ```
 
 Mermaid supports flowcharts, sequence diagrams, Gantt charts, entity-relationship diagrams, and more. The diagram theme automatically follows the current dark/light mode setting.
+
+### Charts
+
+[Vega-Lite](https://vega.github.io/vega-lite/) charts are rendered from a fenced code block tagged `vega-lite` containing a JSON chart specification:
+
+~~~md
+```vega-lite
+{
+  "data": {"url": "data/example.csv"},
+  "width": "container",
+  "mark": "bar",
+  "encoding": {
+    "y": {"field": "Language", "type": "nominal", "sort": "-x", "title": null},
+    "x": {"field": "Loved (%)", "type": "quantitative"}
+  }
+}
+```
+~~~
+
+which renders as:
+
+```vega-lite
+{
+  "data": {"url": "data/example.csv"},
+  "width": "container",
+  "mark": "bar",
+  "encoding": {
+    "y": {"field": "Language", "type": "nominal", "sort": "-x", "title": null},
+    "x": {"field": "Loved (%)", "type": "quantitative"}
+  }
+}
+```
+
+Data can be written inline in the spec or loaded from a CSV or JSON file, as above. The Vega-Lite library is only downloaded on pages that actually contain a chart, and the chart theme follows the dark/light mode setting.
 
 ### Embedded Graphs
 
